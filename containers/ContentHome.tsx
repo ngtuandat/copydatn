@@ -58,7 +58,6 @@ const ContentHome = () => {
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const Gender = ["kids", "men", "women", "all"];
 
   console.log(currentImageIndex, "currentImageIndex");
 
@@ -136,6 +135,19 @@ const ContentHome = () => {
   console.log(startIndex + 8, "loghocai");
   const categorys = Categorys.slice(startIndex, startIndex + 8);
 
+  // const categoryProducts = ["kids", "men", "women", "all"];
+  let categoryProducts: any[] = [];
+  products?.forEach((item) => {
+    const categr = item.category.name;
+    categoryProducts.push(categr);
+  });
+  if (!categoryProducts.includes("all")) {
+    categoryProducts.push("all");
+  }
+  categoryProducts = [...new Set(categoryProducts)];
+
+  console.log(categoryProducts, "jdshdkads");
+
   const handleClick = (id: number) => {
     router.push(`/article/${id}`);
   };
@@ -210,7 +222,7 @@ const ContentHome = () => {
             </div>
             <div className="space-y-7">
               {Support.map((item, index) => (
-                <div className="flex items-start gap-x-5">
+                <div key={index} className="flex items-start gap-x-5">
                   <div className="text-primary">{item.icon}</div>
                   <div>
                     <div className="text-white text-lg font-bold">
@@ -231,19 +243,18 @@ const ContentHome = () => {
         </div>
         <div>
           <div className="flex gap-x-[38px] whitespace-nowrap overflow-hidden">
-            {categorys.map((item, index) => (
+            {categoryProducts.map((item, index) => (
               <div
+                key={index}
                 className="flex flex-col items-center"
                 style={{ minWidth: "124px" }}
               >
                 <img
                   className="w-[124px] h-[124px] rounded-full object-cover"
-                  src={item.image}
+                  src="./images/anh6.jpg"
                   alt=""
                 />
-                <div className="text-white mt-2">{item.title}</div>
-                {/* <div className="text-white">{item.accommodation} chỗ ở</div> */}
-                {/* <div className="text-white">{index}</div> */}
+                <div className="text-white mt-2">{item}</div>
               </div>
             ))}
           </div>
@@ -262,15 +273,17 @@ const ContentHome = () => {
         <div className="text-[30px] flex justify-center font-light text-white mt-5 mb-[30px]">
           Danh Sách Sản Phẩm
         </div>
+        {console.log(products, "productsxxxx")}
         {products && products.length > 0 ? (
           <div>
-            {Gender.map((gender) => (
-              <div key={gender}>
-                <h2 className="text-white">{gender.toUpperCase()}</h2>
+            {categoryProducts.map((categoryProduct, idx) => (
+              <div key={idx}>
+                <h2 className="text-white">{categoryProduct.toUpperCase()}</h2>
                 <div className="grid grid-cols-4 gap-6 mb-10">
                   {products?.map(
                     (product, index) =>
-                      (gender === "all" || product.gender === gender) && (
+                      (categoryProduct === "all" ||
+                        product.category.name === categoryProduct) && (
                         <div key={index}>
                           <Link
                             href={`/product/${product?.id}`}
