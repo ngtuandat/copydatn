@@ -13,6 +13,7 @@ import Button from "../../components/Button";
 import toast from "react-hot-toast";
 import { getOrderStatusInVietnamese } from "../../utils/statusOrder";
 import { deleteOrderGuest, getOrderGuestByPhone } from "../../services/guest";
+import { FaPencilAlt } from "react-icons/fa";
 
 const Purchase = ({ loading }: { loading: Boolean }) => {
   const [listPurchase, setListPurchase] = useState<PurchaseProps[]>();
@@ -75,6 +76,32 @@ const Purchase = ({ loading }: { loading: Boolean }) => {
     }
   }, [token]);
 
+  const Status = [
+    "Tất cả",
+    "Đang chờ",
+    "Đang xử lý",
+    "Đang giao hàng",
+    "Đã giao thành công",
+    "Đã huỷ",
+  ];
+
+  const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+
+  const filterOrders = (orders) => {
+    if (selectedStatus === "Tất cả") {
+      return orders;
+    }
+    return orders.filter(
+      (order) => getOrderStatusInVietnamese(order.status) === selectedStatus
+    );
+  };
+
+  const filteredPurchase = filterOrders(listPurchase || []);
+
+  console.log(filteredPurchase, "filteredPurchase");
+  const filteredPurchaseGuest = filterOrders(listPurchaseGuest || []);
+  console.log(filteredPurchaseGuest, "filteredPurchaseGuest");
+
   return (
     <div>
       {loading && <LoadingPage />}
@@ -114,11 +141,25 @@ const Purchase = ({ loading }: { loading: Boolean }) => {
           <Button onClick={handleFindOrderGuest} label="Tìm" />
         </div>
       )}
+
       {token ? (
         <div className="w-full lg:w-2/3 mx-auto pb-8">
-          {listPurchase && listPurchase?.length > 0 ? (
+          <div className="flex text-white justify-between py-7 bg-[#212B36] mb-5 px-4 rounded-xl">
+            {Status.map((item) => (
+              <div
+                key={item}
+                className={`hover:cursor-pointer hover:text-green-500 ${
+                  selectedStatus === item ? "text-green-500" : ""
+                }`}
+                onClick={() => setSelectedStatus(item)}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+          {filteredPurchase && filteredPurchase?.length > 0 ? (
             <div>
-              {listPurchase?.map((item, idx) => (
+              {filteredPurchase?.map((item, idx) => (
                 <div
                   className="bg-[rgb(33,43,54)] rounded-xl mb-4 last:mb-0 p-6 "
                   key={idx}
@@ -190,6 +231,18 @@ const Purchase = ({ loading }: { loading: Boolean }) => {
                           </span>
                         </button>
                       )}
+                      {item.status === "delivered" && (
+                        <button
+                          // onClick={() => handleDeletePurchase(item?.id)}
+
+                          className="text-white hover:bg-red-700 hover:bg-opacity-10 max-w-[140px] flex items-center justify-center space-x-2 border border-color-primary px-1 py-2 rounded-md"
+                        >
+                          <span className="font-bold text-sm flex items-center space-x-1">
+                            <FaPencilAlt />
+                            <p>Đánh Giá</p>
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -207,9 +260,9 @@ const Purchase = ({ loading }: { loading: Boolean }) => {
         </div>
       ) : (
         <div className="w-full lg:w-2/3 mx-auto pb-8">
-          {listPurchaseGuest && listPurchaseGuest?.length > 0 ? (
+          {filteredPurchaseGuest && filteredPurchaseGuest?.length > 0 ? (
             <div>
-              {listPurchaseGuest?.map((item, idx) => {
+              {filteredPurchaseGuest?.map((item, idx) => {
                 const product = JSON.parse(item.products);
                 return (
                   <div
