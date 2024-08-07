@@ -130,7 +130,7 @@ const BackHome = () => {
       <div className="mt-[100px] max-w-sm lg:max-w-[1200px] mx-auto">
         <form className="flex items-center text-xl mb-12">
           <label htmlFor="simple-search" className="sr-only">
-            Search.
+            Search
           </label>
           <div className="relative  lg:w-full left-[200px]">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
